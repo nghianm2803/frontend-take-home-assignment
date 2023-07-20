@@ -76,7 +76,11 @@ export const TodoList = () => {
     },
   })
 
-  const { mutate: deleteTodo } = api.todo.delete.useMutation({})
+  const { mutate: deleteTodo } = api.todo.delete.useMutation({
+    onSuccess: () => {
+      apiContext.todo.getAll.refetch()
+    },
+  })
 
   return (
     <ul className="grid grid-cols-1 gap-y-3">
@@ -85,7 +89,12 @@ export const TodoList = () => {
           <div className="flex items-center rounded-12 border border-gray-200 px-4 py-3 shadow-sm">
             <Checkbox.Root
               id={String(todo.id)}
-              className="flex h-6 w-6 items-center justify-center rounded-6 border border-gray-300 focus:border-gray-700 focus:outline-none data-[state=checked]:border-gray-700 data-[state=checked]:bg-gray-700"
+              checked={todo.status === 'completed'}
+              className={`flex h-6 w-6 items-center justify-center rounded-6 border ${
+                todo.status === 'completed'
+                  ? 'border-gray-700 bg-gray-700 focus:border-gray-700 focus:outline-none'
+                  : 'border-gray-300'
+              }`}
               onClick={() => {
                 const changeStatus =
                   todo.status === 'completed' ? 'pending' : 'completed'
